@@ -1,0 +1,28 @@
+# Test files and directories
+test-site/
+example-protected-post.md
+
+# Development files
+install.sh
+*.backup
+.DS_Store
+
+# Git files
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
