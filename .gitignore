@@ -1,0 +1,13 @@
+# Dependencies
+/node_modules
+/test-site/node_modules
+
+# Hexo Generated Files
+/test-site/public
+/test-site/db.json
+
+# Build Artifacts
+*.tgz
+
+# Local Editor/Env
+.claude/

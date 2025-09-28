@@ -1,0 +1,43 @@
+{
+  "name": "hexo-password-protection",
+  "version": "1.0.3",
+  "description": "A secure Hexo plugin that provides password protection for posts using client-side AES-256-GCM encryption",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hexo",
+    "plugin",
+    "password",
+    "protection",
+    "encryption",
+    "security",
+    "aes",
+    "gcm",
+    "static-site",
+    "blog"
+  ],
+  "author": "rivdb",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "peerDependencies": {
+    "hexo": ">=5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/hexo-password-protection.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/hexo-password-protection/issues"
+  },
+  "homepage": "https://github.com/your-username/hexo-password-protection#readme",
+  "files": [
+    "index.js",
+    "README.md",
+    "TECHNICAL_GUIDE.md"
+  ]
+}
