@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 function encryptContent(content, password) {
   const salt = crypto.randomBytes(16);
@@ -22,19 +24,14 @@ function encryptContent(content, password) {
 function generatePasswordProtectedHTML(encryptedData, title) {
   return `
 <div id="password-protected-content">
-  <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; font-family: Arial, sans-serif;">
-    <h3 style="text-align: center; margin-bottom: 20px;">Protected Content</h3>
-    <p style="margin-bottom: 15px; color: #666;">This post is password protected. Please enter the password to view the content.</p>
-    <input type="password" id="password-input" placeholder="Enter password"
-           style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-    <button onclick="decryptContent()"
-            style="width: 100%; padding: 10px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      Unlock Content
-    </button>
-    <div id="error-message" style="color: red; margin-top: 10px; display: none;">Incorrect password. Please try again.</div>
+  <div id="password-form-container">
+    <h3>${title}</h3>
+    <p>This content is password protected.</p>
+    <input type="password" id="password-input" placeholder="Enter password">
+    <button onclick="decryptContent()">Unlock</button>
+    <div id="error-message" style="display: none;">Incorrect password. Please try again.</div>
   </div>
 </div>
-
 
 <script>
 const encryptedData = ${JSON.stringify(encryptedData)};
@@ -275,22 +272,18 @@ async function decryptContent() {
 
     const content = new TextDecoder().decode(decrypted);
 
-    // Find the content container and replace only the inner content (like hexo-blog-encrypt does)
     const contentContainer = document.querySelector('.content.e-content') ||
                             document.querySelector('.content') ||
                             document.querySelector('.article-entry') ||
                             document.querySelector('.post-content');
 
     if (contentContainer) {
-      // Replace only the inner content, preserving the container and its classes
       contentContainer.innerHTML = content;
     } else {
-      // Fallback: replace the password container directly
       const passwordContainer = document.getElementById('password-protected-content');
       passwordContainer.outerHTML = content;
     }
 
-    // Regenerate table of contents if it exists
     regenerateTableOfContents();
 
   } catch (error) {
@@ -304,7 +297,8 @@ document.getElementById('password-input').addEventListener('keypress', function(
     decryptContent();
   }
 });
-</script>`;
+</script>
+`;
 }
 
 hexo.extend.filter.register('before_post_render', function(data) {
@@ -318,8 +312,31 @@ hexo.extend.filter.register('before_post_render', function(data) {
 
 hexo.extend.filter.register('after_post_render', function(data) {
   if (data._isPasswordProtected) {
+    const config = hexo.config.password_protection || {};
+    const themeName = config.theme || 'minimal';
+    let themeCss = '';
+
+    try {
+      let cssPath;
+      if (themeName.includes('/') || themeName.includes('.')) {
+        cssPath = path.join(hexo.base_dir, themeName);
+      } else {
+        cssPath = path.join(__dirname, 'styles', `${themeName}.css`);
+      }
+
+      if (fs.existsSync(cssPath)) {
+        themeCss = fs.readFileSync(cssPath, 'utf8');
+      } else {
+        hexo.log.warn(`[hexo-password] Theme CSS not found: ${cssPath}.`);
+      }
+    } catch (error) {
+      hexo.log.error(`[hexo-password] Error loading theme CSS: ${error.message}`);
+    }
+
     const encryptedData = encryptContent(data.content, data._password);
-    data.content = generatePasswordProtectedHTML(encryptedData, data.title);
+    const passwordForm = generatePasswordProtectedHTML(encryptedData, data.title);
+
+    data.content = `<style>${themeCss}</style>${passwordForm}`;
 
     delete data._originalContent;
     delete data._password;
