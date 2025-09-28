@@ -32,9 +32,9 @@
     "url": "git+https://github.com/rivdb/hexo-password-protection"
   },
   "bugs": {
-    "url": "https://github.com/your-username/hexo-password-protection/issues"
+    "url": "https://github.com/rivdb/hexo-password-protection/issues"
   },
-  "homepage": "https://github.com/your-username/hexo-password-protection#readme",
+  "homepage": "https://github.com/rivdb/hexo-password-protection#readme",
   "files": [
     "index.js",
     "README.md",
