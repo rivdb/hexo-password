@@ -1,4 +1,4 @@
-# Hexo Password Protection Plugin
+# Hexo Password Plugin
 
 A secure Hexo plugin that provides password protection for posts using client-side AES-256-GCM encryption.
 
