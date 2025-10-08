@@ -284,7 +284,8 @@ async function decryptContent() {
       passwordContainer.outerHTML = content;
     }
 
-    regenerateTableOfContents();
+    // Wait for DOM to update before regenerating TOC
+    setTimeout(() => regenerateTableOfContents(), 0);
 
   } catch (error) {
     errorDiv.textContent = 'Incorrect password. Please try again.';
