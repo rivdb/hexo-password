@@ -314,7 +314,23 @@ hexo.extend.filter.register('before_post_render', function(data) {
 hexo.extend.filter.register('after_post_render', function(data) {
   if (data._isPasswordProtected) {
     const config = hexo.config.password_protection || {};
-    const themeName = config.theme || 'minimal';
+    let themeName = config.theme || 'minimal';
+
+    // Auto-detect theme if enabled
+    if (config.auto_detect_theme) {
+      const detectedTheme = hexo.config.theme_config?.colorscheme;
+      if (detectedTheme) {
+        // Check if the detected theme CSS file exists
+        const detectedCssPath = path.join(__dirname, 'styles', `${detectedTheme}.css`);
+        if (fs.existsSync(detectedCssPath)) {
+          themeName = detectedTheme;
+          hexo.log.debug(`[hexo-password] Auto-detected theme: ${themeName}`);
+        } else {
+          hexo.log.debug(`[hexo-password] Auto-detected theme '${detectedTheme}' not found, using fallback: ${themeName}`);
+        }
+      }
+    }
+
     let themeCss = '';
 
     try {
