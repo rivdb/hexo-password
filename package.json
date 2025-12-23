@@ -1,6 +1,6 @@
 {
   "name": "hexo-password",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A secure Hexo plugin that provides password protection for posts using client-side AES-256-GCM encryption",
   "main": "index.js",
   "scripts": {

@@ -64,14 +64,6 @@ async function pbkdf2(password, salt, iterations, keyLength) {
 }
 
 function regenerateTableOfContents() {
-  // Inject CSS to fix ToC rendering on mobile
-  if (!document.getElementById('hexo-password-toc-fix')) {
-    const style = document.createElement('style');
-    style.id = 'hexo-password-toc-fix';
-    style.textContent = '.toc-number, .toc-text { display: inline !important; } .toc-link { display: block !important; white-space: normal !important; }';
-    document.head.appendChild(style);
-  }
-
   // Find TOC elements - check both main TOC and footer TOC for Cactus theme
   const tocSelectors = [
     '#toc ol.toc',           // Cactus main TOC
@@ -138,6 +130,7 @@ function generateCactusTOC(headings) {
   let tocHTML = '';
   let numbers = [0, 0, 0, 0, 0, 0]; // Track numbering for each level
   let currentLevel = 0;
+  let minLevel = Math.min(...headings.map(h => parseInt(h.tagName.charAt(1))));
 
   headings.forEach((heading, index) => {
     const level = parseInt(heading.tagName.charAt(1));
@@ -156,55 +149,41 @@ function generateCactusTOC(headings) {
       numbers[i] = 0;
     }
 
-    // Generate number string (e.g., "2.1." or "3.")
+    // Generate number string starting from minLevel
     let numberStr = '';
-    for (let i = 0; i < level; i++) {
+    for (let i = minLevel - 1; i < level; i++) {
       if (numbers[i] > 0) {
-        numberStr += numbers[i] + '.';
+        numberStr += (numberStr ? '.' : '') + numbers[i];
+      }
+    }
+    numberStr += '.';
+
+    // Handle nesting - only nest if deeper than minLevel
+    const relativeLevel = level - minLevel + 1;
+    const relativeCurrentLevel = currentLevel - minLevel + 1;
+
+    if (relativeLevel > relativeCurrentLevel && relativeCurrentLevel > 0) {
+      tocHTML += '<ol>';
+    } else if (relativeLevel < relativeCurrentLevel) {
+      for (let i = relativeCurrentLevel; i > relativeLevel; i--) {
+        tocHTML += '</ol></li>';
       }
     }
 
-    // Handle nesting
-    if (level > currentLevel) {
-      // Opening nested levels
-      for (let i = currentLevel; i < level - 1; i++) {
-        tocHTML += '<ol class="toc-child">';
-      }
-      if (level > 1 && currentLevel < level - 1) {
-        tocHTML += '<ol class="toc-child">';
-      }
-    } else if (level < currentLevel) {
-      // Closing nested levels
-      for (let i = currentLevel; i > level; i--) {
-        tocHTML += '</ol>';
-      }
-    }
-
-    tocHTML += '<li class="toc-item toc-level-' + level + '">' +
-               '<a class="toc-link" href="#' + id + '">' +
-               '<span class="toc-number">' + numberStr + '</span> ' +
-               '<span class="toc-text">' + text + '</span>' +
-               '</a>';
-
-    // Check if next heading is deeper (will need to open child)
-    const nextHeading = headings[index + 1];
-    if (nextHeading) {
-      const nextLevel = parseInt(nextHeading.tagName.charAt(1));
-      if (nextLevel > level) {
-        // Don't close this li yet, child elements coming
-      } else {
-        tocHTML += '</li>';
-      }
-    } else {
+    if (relativeCurrentLevel > 0 && relativeLevel === relativeCurrentLevel) {
       tocHTML += '</li>';
     }
+
+    tocHTML += '<li><a href="#' + id + '">' + numberStr + ' ' + text + '</a>';
 
     currentLevel = level;
   });
 
-  // Close any remaining open levels
-  for (let i = currentLevel; i > 1; i--) {
-    tocHTML += '</ol>';
+  // Close any remaining open tags
+  const relativeCurrentLevel = currentLevel - minLevel + 1;
+  tocHTML += '</li>';
+  for (let i = 1; i < relativeCurrentLevel; i++) {
+    tocHTML += '</ol></li>';
   }
 
   return tocHTML;
