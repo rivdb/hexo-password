@@ -95,13 +95,16 @@ function regenerateTableOfContents() {
 
   if (tocElements.length === 0) return; // No TOC found
 
-  // Get all headings from the content container (match live version structure)
+  // Use the SAME selector order as decryption to ensure we find the same container
   const articleContainer = document.querySelector('.content.e-content') ||
                           document.querySelector('.content') ||
                           document.querySelector('.article-entry') ||
-                          document.querySelector('.post-content') ||
-                          document.querySelector('article');
-  const headings = articleContainer ? articleContainer.querySelectorAll('h1, h2, h3, h4, h5, h6') : [];
+                          document.querySelector('.post-content');
+
+  if (!articleContainer) return;
+
+  // Get only H2-H6 headings (exclude H1 which is typically the article title)
+  const headings = Array.from(articleContainer.querySelectorAll('h2, h3, h4, h5, h6'));
 
   if (headings.length === 0) {
     // No headings, hide TOC
