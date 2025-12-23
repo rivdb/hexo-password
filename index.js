@@ -179,7 +179,7 @@ function generateCactusTOC(headings) {
     const relativeCurrentLevel = currentLevel - minLevel + 1;
 
     if (relativeLevel > relativeCurrentLevel && relativeCurrentLevel > 0) {
-      tocHTML += '<ol>';
+      tocHTML += '<ol class="toc-child">';
     } else if (relativeLevel < relativeCurrentLevel) {
       for (let i = relativeCurrentLevel; i > relativeLevel; i--) {
         tocHTML += '</ol></li>';
@@ -190,7 +190,11 @@ function generateCactusTOC(headings) {
       tocHTML += '</li>';
     }
 
-    tocHTML += '<li><a href="#' + id + '">' + text + '</a>';
+    tocHTML += '<li class="toc-item toc-level-' + level + '">' +
+               '<a class="toc-link" href="#' + id + '">' +
+               '<span class="toc-number">' + numberStr + '</span>' +
+               '<span class="toc-text">' + text + '</span>' +
+               '</a>';
 
     currentLevel = level;
   });
