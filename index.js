@@ -190,7 +190,7 @@ function generateCactusTOC(headings) {
       tocHTML += '</li>';
     }
 
-    tocHTML += '<li><a href="#' + id + '">' + numberStr + ' ' + text + '</a>';
+    tocHTML += '<li><a href="#' + id + '">' + text + '</a>';
 
     currentLevel = level;
   });
