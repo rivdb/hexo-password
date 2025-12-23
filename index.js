@@ -192,7 +192,7 @@ function generateCactusTOC(headings) {
 
     tocHTML += '<li class="toc-item toc-level-' + level + '">' +
                '<a class="toc-link" href="#' + id + '">' +
-               '<span class="toc-number">' + numberStr + '</span>' +
+               '<span class="toc-number">' + numberStr + '</span> ' +
                '<span class="toc-text">' + text + '</span>' +
                '</a>';
 
