@@ -64,6 +64,14 @@ async function pbkdf2(password, salt, iterations, keyLength) {
 }
 
 function regenerateTableOfContents() {
+  // Inject CSS to fix ToC rendering on mobile
+  if (!document.getElementById('hexo-password-toc-fix')) {
+    const style = document.createElement('style');
+    style.id = 'hexo-password-toc-fix';
+    style.textContent = '.toc-number, .toc-text { display: inline !important; } .toc-link { display: block !important; white-space: normal !important; }';
+    document.head.appendChild(style);
+  }
+
   // Find TOC elements - check both main TOC and footer TOC for Cactus theme
   const tocSelectors = [
     '#toc ol.toc',           // Cactus main TOC
