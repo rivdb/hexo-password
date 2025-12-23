@@ -63,16 +63,23 @@ async function pbkdf2(password, salt, iterations, keyLength) {
   return new Uint8Array(derivedBits);
 }
 
+function hideTableOfContents() {
+  // Hide all TOC containers on page load
+  const tocContainers = document.querySelectorAll('#toc, #toc-footer, .toc-container');
+  tocContainers.forEach(toc => {
+    toc.style.display = 'none';
+  });
+}
+
 function regenerateTableOfContents() {
-  // Find TOC elements - check both main TOC and footer TOC for Cactus theme
+  // Find TOC elements - look for the ol.toc elements specifically
   const tocSelectors = [
-    '#toc ol.toc',           // Cactus main TOC
-    '#toc-footer ol.toc',    // Cactus footer TOC
-    '.toc',                  // Generic TOC
+    '#toc ol',           // Cactus main TOC
+    '#toc-footer ol',    // Cactus footer TOC
+    '.toc',              // Generic TOC
     '.post-toc',
     '.article-toc',
     '.table-of-contents',
-    '#toc',
     '.toc-content'
   ];
 
@@ -119,10 +126,16 @@ function regenerateTableOfContents() {
     tocHTML = generateGenericTOC(headings);
   }
 
-  // Update all TOC elements
+  // Update all TOC elements and show their containers
   tocElements.forEach(tocElement => {
     tocElement.innerHTML = tocHTML;
     tocElement.style.display = '';
+  });
+
+  // Show TOC containers
+  const tocContainers = document.querySelectorAll('#toc, #toc-footer, .toc-container');
+  tocContainers.forEach(toc => {
+    toc.style.display = '';
   });
 }
 
@@ -285,6 +298,9 @@ document.getElementById('password-input').addEventListener('keypress', function(
     decryptContent();
   }
 });
+
+// Hide ToC on page load when password form is present
+hideTableOfContents();
 </script>
 `;
 }
